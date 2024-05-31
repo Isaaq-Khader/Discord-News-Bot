@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from discord import Intents, Client, Message
 import logging
 import os
-from responses import ResponseHandler
+from src.responses import ResponseHandler
 from typing import Final
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(message)s')
