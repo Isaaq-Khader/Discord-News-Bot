@@ -8,7 +8,7 @@ from responses import ResponseHandler
 from typing import Final
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(message)s')
-logger = logging.getLogger("NewsBot")
+logger = logging.getLogger("RonBurgundy")
 
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
