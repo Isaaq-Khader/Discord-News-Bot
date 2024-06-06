@@ -32,6 +32,8 @@ class Dice:
                 if not num or not die:
                     logger.debug(f"{log.DEBUG} no number of dice or die side found...")
                     return "You hooligan, the statement is not correct... please try again"
+                if num > 100 or die > 100:
+                    return "What am I, a wizard? I can't do that."
                 total = mod
                 logger.debug(f"{log.DEBUG} Initial Total: {total}")
                 for instance in range(num):
@@ -41,5 +43,5 @@ class Dice:
                     logger.debug(f"{log.DEBUG} Rolled: {roll}")
                     logger.debug(f"{log.DEBUG} Current Total: {total}")
                 return f"You rolled [{attribute}]: {total}"
-        return "Not sure what you mean there buddy."
+        return ""
     
