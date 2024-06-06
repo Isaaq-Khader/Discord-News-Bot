@@ -46,7 +46,7 @@ class Dice:
                     return "You rolled a Nat 1!"
                 if total < 1:
                     total = 1
-                if total == die and num == 1:
+                if roll == die and num == 1:
                     return f"You rolled [{attribute}]: CRITICAL {total}!"
                 return f"You rolled [{attribute}]: {total}"
         return ""
