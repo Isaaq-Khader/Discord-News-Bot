@@ -12,8 +12,8 @@ class Dice:
         if modifier:
             modifier = int(modifier)
             logger.debug(f"{log.DEBUG} Modifier used: {modifier}")
-            num = re.sub("[d][0-9]+[+][0-9]+", "", roll)
-            die = re.sub("[0-9]+[d]|[+][0-9]+", "", roll)
+            num = re.sub("[d][0-9]+[+, -][0-9]+", "", roll)
+            die = re.sub("[0-9]+[d]|[+, -][0-9]+", "", roll)
         else:
             logger.debug(f"{log.DEBUG} No modifier used.")
             modifier = 0
@@ -42,6 +42,12 @@ class Dice:
                     total += roll
                     logger.debug(f"{log.DEBUG} Rolled: {roll}")
                     logger.debug(f"{log.DEBUG} Current Total: {total}")
+                if roll == 1 and num == 1:
+                    return "You rolled a Nat 1!"
+                if total < 1:
+                    total = 1
+                if total == die and num == 1:
+                    return f"You rolled [{attribute}]: CRITICAL {total}!"
                 return f"You rolled [{attribute}]: {total}"
         return ""
     
