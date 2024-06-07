@@ -6,7 +6,7 @@ import re
 logger = logging.getLogger("Dice")
 
 class Dice:
-    def split_roll_text(roll: str):
+    def split_roll_text(roll: str) -> tuple[int, int, int]:
         modifier = re.sub("[0-9]+[d][0-9]+", "", roll)
         logger.debug(f"{log.DEBUG} Modifier regex result: {modifier}")
         if modifier:
