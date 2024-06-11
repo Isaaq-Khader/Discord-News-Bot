@@ -1,0 +1,4 @@
+discord.py==2.3.2
+gnews==0.3.7
+news_please==1.5.44
+python-dotenv==1.0.1
