@@ -1,6 +1,18 @@
+import logging
+from logs import log
 import discord
 
+logger = logging.getLogger("BotUtil")
+
 class BotUtil:
+    def capitalize_words(words: list) -> list:
+        new_words = []
+        for word in words:
+            logger.info(f"{log.DEBUG} Current word: {word}")
+            new_word = word[0].upper() + word[1:]
+            logger.info(f"{log.DEBUG} New word: {new_word}")
+            new_words.append(new_word)
+        return new_words
     def embedded_message(embedded_title: str, embedded_description: str) -> discord.Embed:
         embed = discord.Embed(
             title=embedded_title,
@@ -10,3 +22,10 @@ class BotUtil:
         embed.set_footer(text="Written by San Diego's Finest")
         embed.set_thumbnail(url="https://ichef.bbci.co.uk/news/464/mcs/media/images/69276000/jpg/_69276020_ronburgundy_ap.jpg")
         return embed
+    
+    def find_emoji(message: discord.Message, emoji_name: str) -> discord.Emoji:
+        emojis = message.guild.emojis
+        for emoji in emojis:
+            if emoji.name == emoji_name:
+                return emoji
+        return None
