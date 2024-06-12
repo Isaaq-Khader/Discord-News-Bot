@@ -32,7 +32,7 @@ class DiscordBot:
     @client.event
     async def on_ready() -> None:
         logger.info(f"{log.INFO} {client.user} is now running!")
-        await client.change_presence(activity=d.Activity(type=d.ActivityType.watching, name="current news"))
+        await client.change_presence(activity=d.Activity(type=d.ActivityType.streaming, name="current news"))
 
     @client.event
     async def on_message(message: d.Message) -> None:

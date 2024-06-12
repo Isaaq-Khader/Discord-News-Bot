@@ -13,6 +13,7 @@ class BotUtil:
             logger.info(f"{log.DEBUG} New word: {new_word}")
             new_words.append(new_word)
         return new_words
+    
     def embedded_message(embedded_title: str, embedded_description: str) -> discord.Embed:
         embed = discord.Embed(
             title=embedded_title,

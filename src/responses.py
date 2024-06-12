@@ -39,6 +39,7 @@ class ResponseHandler:
                         return Dice.roll_dice(attributes)
                     case "news":
                         return await News.get_news(message, attributes)
+                    
         chance = randint(1, 10)
         logger.info(f"random number was {chance}")
         if chance == 3:

@@ -57,7 +57,3 @@ class AI:
             embedded_message.add_field(name=f"**{title}**", value=summary, inline=False)
         await message.channel.send(embed=embedded_message)
         return ""
-    def create_message():
-        
-
-        print(completion.choices[0].message)
