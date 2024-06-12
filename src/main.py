@@ -17,13 +17,13 @@ intents.message_content = True
 client = d.Client(intents=intents)
 
 class DiscordBot:
-    async def send_message(message: d.Message, user_message: str) -> None:
+    async def process_and_send_message(message: d.Message, user_message: str) -> None:
         if not user_message:
             logger.warning(f"{log.WARN} Empty user message received")
             return
         
         try:
-            response = ResponseHandler.handle_response(user_message)
+            response = await ResponseHandler.handle_response(message, user_message)
             if response:
                 await message.channel.send(response)
         except Exception as e:
@@ -44,11 +44,10 @@ class DiscordBot:
         channel = str(message.channel)
 
         logger.info(f"{log.INFO} [{channel}] {username}: '{user_message}'")
-        await DiscordBot.send_message(message, user_message)
+        await DiscordBot.process_and_send_message(message, user_message)
     
 def main():
     client.run(token=token)
-    bot = DiscordBot()
 
 if __name__ == "__main__":
     main()

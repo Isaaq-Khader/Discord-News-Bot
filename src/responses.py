@@ -1,5 +1,6 @@
 import logging
 from random import randint
+import discord
 from logs import log
 from news import News
 from dice import Dice
@@ -7,7 +8,7 @@ from dice import Dice
 logger = logging.getLogger("ResponseHandler")
 
 class ResponseHandler: 
-    def handle_response(user_input: str) -> str:
+    async def handle_response(message: discord.Message, user_input: str) -> str:
         cannonball = "Ladies and gentlemen, can I please have your attention. I've just been handed an urgent and horrifying news story. I need all of you to stop what you're doing and listen. CANNONBALL!!"
         help_text = "COMING SOON!"
         commands = ["roll",
@@ -37,7 +38,7 @@ class ResponseHandler:
                     case "roll":
                         return Dice.roll_dice(attributes)
                     case "news":
-                        return News.get_news(attributes)
+                        return await News.get_news(message, attributes)
         chance = randint(1, 10)
         logger.info(f"random number was {chance}")
         if chance == 3:
