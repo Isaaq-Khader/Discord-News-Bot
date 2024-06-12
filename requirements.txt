@@ -1,4 +1,5 @@
 discord.py==2.3.2
 gnews==0.3.7
 news_please==1.5.44
+openai==1.33.0
 python-dotenv==1.0.1
