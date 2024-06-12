@@ -67,14 +67,14 @@ class News:
             match attributes[1]:
                 case "please":
                     article_title, article_text = News.get_random_article()
-                    return await AI.summarize_article(message, article_title, article_text)
+                    return await AI.send_article(message, article_title, article_text)
                 case "from":
                     article_titles, article_texts = News.get_specific_articles(message, attributes[2:])
-                    return await AI.process_articles(message, article_titles, article_texts)
+                    return await AI.process_articles(message, "What's New in Business", article_titles, article_texts)
                 case "get":
                     logger.debug(f"{log.DEBUG} sending {attributes[2:]} to details")
                     article_title, article_text = News.get_article_details(attributes[2])
-                    return await AI.summarize_article(message, article_title, article_text)
+                    return await AI.send_article(message, article_title, article_text)
                 case _:
                     return ""
         except IndexError:
