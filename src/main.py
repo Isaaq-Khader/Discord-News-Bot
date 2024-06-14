@@ -1,11 +1,9 @@
 from dotenv import load_dotenv
-# from discord import Intents, Client, Message
 import discord as d
 import logging
 from logs import log
 import os
 from responses import ResponseHandler
-from typing import Final
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(message)s')
 logger = logging.getLogger("RonBurgundy")
