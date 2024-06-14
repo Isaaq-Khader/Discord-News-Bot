@@ -21,8 +21,11 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=requirements.txt,target=requirements.txt \
     python -m pip install -r requirements.txt
 
+RUN pip install lxml[html_clean]
+RUN pip install newspaper3k==0.2.8
+
 USER appuser
 
 COPY . .
 
-CMD [“python”, “./main.py”] 
+CMD python src/main.py
