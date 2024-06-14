@@ -26,7 +26,7 @@ class DiscordBot:
                 await message.channel.send(response)
         except Exception as e:
             logger.critical(f"{log.ERROR} {e}")
-    
+
     @client.event
     async def on_ready() -> None:
         logger.info(f"{log.INFO} {client.user} is now running!")

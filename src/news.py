@@ -102,6 +102,9 @@ class News:
                     logger.debug(f"{log.DEBUG} sending {attributes[2:]} to details")
                     article_title, article_text = News.get_article_details(attributes[2])
                     return await AI.send_article(message, article_title, article_text)
+                case "set":
+                    # TODO: setup channel for daily news and add to list of files with the channel to send to
+                    return ""
                 case _:
                     return ""
         except IndexError:
