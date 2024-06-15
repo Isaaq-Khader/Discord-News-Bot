@@ -1,15 +1,46 @@
+import datetime
 import discord
 from gnews import GNews
 import json
 import logging
 from bot import BotUtil
+from database import DatabaseNews
+from discord.ext import tasks
 from logs import log
 from newsplease import NewsPlease, NewsArticle
 from openai_api import AI
 
 logger = logging.getLogger("News")
+SENDING_TIME = datetime.time(3, 23, 0, 0)
 
 class News:
+    def __init__(self, client) -> None:
+        self.send_news.start()
+        self.client = client
+        self.database = DatabaseNews()
+
+    @tasks.loop(time=SENDING_TIME)
+    async def send_news(self):
+        try:
+            logger.info(f"{log.INFO} Running daily news!")
+            
+            channel_ids = self.database.get_channel_ids()
+            logger.info(f"Channel IDs: {channel_ids}")
+            key_terms = self.database.get_key_terms()
+            logger.info(f"Key terms: {key_terms}")
+            for curr_id, curr_key in zip(channel_ids, key_terms):
+                id = curr_id[0]
+                key = curr_key[0]
+                logger.info(f"Current Channel ID: {id}")
+                logger.info(f"Current search term: {key}")
+                channel = self.client.get_channel(id)
+                article_titles, article_texts, title = News.get_specific_articles(list(key.split(" ")))
+                embedded_response = AI.process_articles(title, article_titles, article_texts)
+                await channel.send("SENDING NEWS FOR THE DAY!")
+                await channel.send(embed=embedded_response)
+        except Exception as e:
+            logger.critical(f"{log.ERROR} {e}")
+
     def get_articles_from_google(GoogleNews: GNews, news_articles: list[dict[str, any]] | list) -> tuple[list, list]:
         article_title_list = []
         article_text_list = []
@@ -44,7 +75,7 @@ class News:
 
         return article_title, article_text
 
-    def get_specific_articles(message: discord.Message, attributes: list[str]) -> tuple[list, list, str]:
+    def get_specific_articles(attributes: list[str]) -> tuple[list, list, str]:
         GoogleNews = GNews(max_results=5, period='1d', exclude_websites=["ft.com", "wsj.com"])
         try:
             match attributes[0].lower():
@@ -89,24 +120,28 @@ class News:
             match attributes[1].lower():
                 case "please":
                     article_title, article_text = News.get_random_article()
-                    return await AI.send_article(message, article_title, article_text)
+                    return AI.send_article(article_title, article_text)
                 case "from":
                     emoji = BotUtil.find_emoji(message, "standing_kitten")
                     if emoji:
                         await message.add_reaction(emoji)
                     else:
                         await message.add_reaction("🫡")
-                    article_titles, article_texts, title = News.get_specific_articles(message, attributes[2:])
-                    return await AI.process_articles(message, title, article_titles, article_texts)
+                    article_titles, article_texts, title = News.get_specific_articles(attributes[2:])
+                    return AI.process_articles(title, article_titles, article_texts)
                 case "get":
                     logger.debug(f"{log.DEBUG} sending {attributes[2:]} to details")
                     article_title, article_text = News.get_article_details(attributes[2])
-                    return await AI.send_article(message, article_title, article_text)
+                    return AI.send_article(article_title, article_text)
                 case "set":
                     # TODO: setup channel for daily news and add to list of files with the channel to send to
-                    return ""
+                    response = DatabaseNews.handle_set(DatabaseNews(), attributes[2:])
+                    return response
                 case _:
                     return ""
         except IndexError:
             logger.critical(f"{log.ERROR} User went out of bounds for news call. Perhaps it wasn't on purpose?")
+            return ""
+        except TypeError as e:
+            logger.critical(f"{log.ERROR} Required one or more arguments to proceed... Error: {e}")
             return ""
