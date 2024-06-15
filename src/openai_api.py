@@ -41,7 +41,7 @@ class AI:
     def send_article(article_title: str, article_text: str) -> str:
         if not article_title or not article_text:
             return "There seems to be no information I can give you."
-        if AI.check_article():
+        if AI.check_article(article_title):
             return "Unable to summarize article."
         summary = AI.summarize_article(article_text)
         embedded_message = BotUtil.embedded_message(article_title, summary)
@@ -52,7 +52,7 @@ class AI:
             return "There seems to be no information I can give you."
         embedded_message = BotUtil.embedded_message(title, "")
         for title, text in zip(article_titles, article_texts):
-            if AI.check_article():
+            if AI.check_article(title):
                 logger.warning(f"{log.WARN} Article was unable to be read... skipping...")
                 continue
             logger.debug(f"{log.DEBUG} Article Title: {title}")

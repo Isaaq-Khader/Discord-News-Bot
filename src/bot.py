@@ -5,6 +5,13 @@ import discord
 logger = logging.getLogger("BotUtil")
 
 class BotUtil:
+    async def acknowledge_message(message: discord.Message):
+        emoji = BotUtil.find_emoji(message, "standing_kitten")
+        if emoji:
+            await message.add_reaction(emoji)
+        else:
+            await message.add_reaction("🫡")
+
     def capitalize_words(words: list) -> list:
         new_words = []
         for word in words:

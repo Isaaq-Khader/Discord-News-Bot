@@ -1,7 +1,7 @@
 import datetime
+from random import randint
 import discord
 from gnews import GNews
-import json
 import logging
 from bot import BotUtil
 from database import DatabaseNews
@@ -23,7 +23,6 @@ class News:
     async def send_news(self):
         try:
             logger.info(f"{log.INFO} Running daily news!")
-            
             channel_ids = self.database.get_channel_ids()
             logger.info(f"Channel IDs: {channel_ids}")
             key_terms = self.database.get_key_terms()
@@ -106,38 +105,46 @@ class News:
         articles_titles, articles_texts = News.get_articles_from_google(GoogleNews, news_articles)
         return articles_titles, articles_texts, title
 
+    def select_random_article(GoogleNews: GNews) -> str:
+        articles = GoogleNews.get_top_news()
+        random = randint(0, GoogleNews.max_results - 1)
+        logger.info(f"{log.DEBUG} Chose random article #{random}")
+        return articles[random]["url"]
+
     def get_random_article() -> tuple[str, str]:
-        # TODO: Get a random article from the web and pass along the title and text
-        return [], []
-        article_link = "https://www.cnn.com/2024/06/05/investing/nvidia-stock-apple-microsoft-market-value/index.html"
-        article_title, article_text = News.get_article_details(article_link)
-        return article_title, article_text
+        GoogleNews = GNews(max_results=20, period='1d', exclude_websites=["ft.com", "wsj.com"])
+        article_link = News.select_random_article(GoogleNews)
+        logger.info(f"{log.DEBUG} Attained {article_link}")
+        article = GoogleNews.get_full_article(article_link)
+        return article.title, article.text
+        
 
     async def get_news(message: discord.Message, attributes: list[str]) -> str:
-        logger.info(f"{log.INFO} Attempting to retreive news...")
+        logger.info(f"{log.INFO} Potential news call received")
         logger.debug(f"{log.DEBUG} Attributes received: {attributes}")
         try:
             match attributes[1].lower():
                 case "please":
+                    await BotUtil.acknowledge_message(message)
+                    logger.info(f"{log.DEBUG} User wants a random news article")
                     article_title, article_text = News.get_random_article()
+                    logger.info(f"{log.DEBUG} Random article's title: {article_title}")
                     return AI.send_article(article_title, article_text)
                 case "from":
-                    emoji = BotUtil.find_emoji(message, "standing_kitten")
-                    if emoji:
-                        await message.add_reaction(emoji)
-                    else:
-                        await message.add_reaction("🫡")
+                    await BotUtil.acknowledge_message(message)
                     article_titles, article_texts, title = News.get_specific_articles(attributes[2:])
                     return AI.process_articles(title, article_titles, article_texts)
                 case "get":
+                    await BotUtil.acknowledge_message(message)
                     logger.debug(f"{log.DEBUG} sending {attributes[2:]} to details")
                     article_title, article_text = News.get_article_details(attributes[2])
                     return AI.send_article(article_title, article_text)
                 case "set":
-                    # TODO: setup channel for daily news and add to list of files with the channel to send to
+                    await BotUtil.acknowledge_message(message)
                     response = DatabaseNews.handle_set(DatabaseNews(), attributes[2:])
                     return response
                 case _:
+                    logger.debug(f"{log.DEBUG} User either entered wrong command or used 'news' in a sentence")
                     return ""
         except IndexError:
             logger.critical(f"{log.ERROR} User went out of bounds for news call. Perhaps it wasn't on purpose?")
