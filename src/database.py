@@ -1,5 +1,6 @@
 import logging
 import sqlite3
+from bot import BotUtil
 from logs import log
 
 logger = logging.getLogger("News Database")
@@ -47,9 +48,14 @@ class DatabaseNews:
     def handle_set(self, attributes: list[str]) -> str:
         try:
             channel = attributes[0]
-            terms = " ".join(attributes[1:])
-            self.write(channel, terms)
-            return f"set channel {channel} with search terms: {terms}"
+            if BotUtil.verify_channel(channel):
+                logger.info(f"{log.DEBUG} Valid channel, adding to database...")
+                terms = " ".join(attributes[1:])
+                self.write(channel, terms)
+                return f"Set channel {channel} with search terms: {terms}"
+            else:
+                logger.critical(f"{log.ERROR} Invalid channel given!")
+                return "No channel ID given."
         except IndexError:
             logger.critical(f"{log.ERROR} User went out of bounds for setting up news.")
             return "Specify a channel to set the news up to, along with any key words to search for."

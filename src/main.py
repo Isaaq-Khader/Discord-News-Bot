@@ -20,7 +20,6 @@ client = d.Client(intents=intents)
 class DiscordBot:
     async def handle_response(message: d.Message, user_input: str) -> str:
         cannonball = "Ladies and gentlemen, can I please have your attention. I've just been handed an urgent and horrifying news story. I need all of you to stop what you're doing and listen. CANNONBALL!!"
-        help_text = "COMING SOON!"
         commands = ["roll",
                     "news",
                     "help"]

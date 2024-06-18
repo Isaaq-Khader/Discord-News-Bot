@@ -1,6 +1,7 @@
 import logging
 from logs import log
 import discord
+import re
 
 logger = logging.getLogger("BotUtil")
 
@@ -37,3 +38,9 @@ class BotUtil:
             if emoji.name == emoji_name:
                 return emoji
         return None
+    
+    def verify_channel(channel: str):
+        logger.info(f"{log.DEBUG} Verifying channel...")
+        regex = "^\d+$" # all digits
+        result = re.search(regex, channel)
+        return result is not None

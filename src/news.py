@@ -27,15 +27,23 @@ class News:
             logger.info(f"Channel IDs: {channel_ids}")
             key_terms = self.database.get_key_terms()
             logger.info(f"Key terms: {key_terms}")
+            key_terms_cache: dict = {}
             for curr_id, curr_key in zip(channel_ids, key_terms):
                 id = curr_id[0]
                 key = curr_key[0]
                 logger.info(f"Current Channel ID: {id}")
                 logger.info(f"Current search term: {key}")
+
                 channel = self.client.get_channel(id)
+                if key in list(key_terms_cache.keys()):
+                    logger.info(f"{log.DEBUG} Using cached embedded response for channel {id}!")
+                    embedded_response = key_terms_cache.get(key)
+                    await channel.send(embed=embedded_response)
+                    continue
+                    
                 article_titles, article_texts, title = News.get_specific_articles(list(key.split(" ")))
                 embedded_response = AI.process_articles(title, article_titles, article_texts)
-                await channel.send("SENDING NEWS FOR THE DAY!")
+                key_terms_cache[key] = embedded_response
                 await channel.send(embed=embedded_response)
         except Exception as e:
             logger.critical(f"{log.ERROR} {e}")
@@ -139,10 +147,22 @@ class News:
                     logger.debug(f"{log.DEBUG} sending {attributes[2:]} to details")
                     article_title, article_text = News.get_article_details(attributes[2])
                     return AI.send_article(article_title, article_text)
-                case "set":
+                case "add":
                     await BotUtil.acknowledge_message(message)
-                    response = DatabaseNews.handle_set(DatabaseNews(), attributes[2:])
-                    return response
+                    return DatabaseNews.handle_set(DatabaseNews(), attributes[2:])
+                case "remove":
+                    await BotUtil.acknowledge_message(message)
+                    # TODO: will remove news for specified channel using key term
+                    return "TODO"
+                case "list":
+                    await BotUtil.acknowledge_message(message)
+                    data = DatabaseNews.read_channel_terms(DatabaseNews(), message.channel.id)
+                    logger.info(f"{log.DEBUG} Current read data: {data}")
+                    embedded_message = BotUtil.embedded_message(f"Current search terms for #{message.channel.name}", "")
+                    for _, key in data:
+                        name_list = BotUtil.capitalize_words(list(key.split()))
+                        embedded_message.add_field(name="", value=f"* {" ".join(name_list)}", inline=False)
+                    return embedded_message
                 case _:
                     logger.debug(f"{log.DEBUG} User either entered wrong command or used 'news' in a sentence")
                     return ""
