@@ -33,11 +33,12 @@ class DiscordBot:
         single_responses = {"cannonball":  cannonball,
                             "hello": "Hello there!",
                             "hey": "Hey there!",
-                            "hi": "Hi there!",}
+                            "hi": "Hi there!",
+                            "ron": "What is it?",}
         formatted_response = user_input.lower().split()
         logger.debug(f"{log.DEBUG} Formatted response: {formatted_response}")
 
-        for index, word in enumerate(formatted_response):
+        for index, word in enumerate(formatted_response, 1):
             if word in single_responses:
                 logger.debug(f"{log.DEBUG} Word Match for {word}")
                 return single_responses[word]

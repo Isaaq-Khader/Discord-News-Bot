@@ -11,7 +11,7 @@ from newsplease import NewsPlease, NewsArticle
 from openai_api import AI
 
 logger = logging.getLogger("News")
-SENDING_TIME = datetime.time(3, 23, 0, 0)
+SENDING_TIME = datetime.time(14, 0, 0, 0) # in UTC (-5 CST)
 
 class News:
     def __init__(self, client) -> None:
@@ -131,7 +131,7 @@ class News:
         logger.info(f"{log.INFO} Potential news call received")
         logger.debug(f"{log.DEBUG} Attributes received: {attributes}")
         try:
-            match attributes[1].lower():
+            match attributes[0].lower():
                 case "please":
                     await BotUtil.acknowledge_message(message)
                     logger.debug(f"{log.DEBUG} User wants a random news article")
@@ -140,19 +140,19 @@ class News:
                     return AI.send_article(article_title, article_text)
                 case "from":
                     await BotUtil.acknowledge_message(message)
-                    article_titles, article_texts, title = News.get_specific_articles(attributes[2:])
+                    article_titles, article_texts, title = News.get_specific_articles(attributes[1:])
                     return AI.process_articles(title, article_titles, article_texts)
                 case "get":
                     await BotUtil.acknowledge_message(message)
-                    logger.debug(f"{log.DEBUG} sending {attributes[2:]} to details")
-                    article_title, article_text = News.get_article_details(attributes[2])
+                    logger.debug(f"{log.DEBUG} sending {attributes[1:]} to details")
+                    article_title, article_text = News.get_article_details(attributes[1])
                     return AI.send_article(article_title, article_text)
                 case "add":
                     await BotUtil.acknowledge_message(message)
                     return DatabaseNews.handle_set(DatabaseNews(), attributes[2:])
                 case "remove":
                     await BotUtil.acknowledge_message(message)
-                    search_term = " ".join(attributes[2:])
+                    search_term = " ".join(attributes[1:])
                     return DatabaseNews.delete_key_term(DatabaseNews(), message.channel.id, search_term)
                 case "list":
                     await BotUtil.acknowledge_message(message)

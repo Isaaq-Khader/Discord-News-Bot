@@ -53,7 +53,7 @@ class DatabaseNews:
         query = "DELETE FROM dailynews WHERE channel_id = ? AND key_terms = ?"
         cursor.execute(query, (channel_id, key.lower(),))
         database.commit()
-        return "Very sad to see you go. Darn hooligans."
+        return "Very sad to see you go. Darn hooligans." # TODO: see if it can validate the removal
     
     def handle_set(self, attributes: list[str]) -> str:
         try:
