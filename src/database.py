@@ -45,6 +45,16 @@ class DatabaseNews:
         database.commit()
         return "Very sad to see you go. Darn hooligans."
     
+    def delete_key_term(self, channel_id: str, key: str) -> str:
+        if not key:
+            return "No search term was given. Provide a search term to remove."
+        logger.info(f"{log.DEBUG} Remove Channel ID: {channel_id}")
+        logger.info(f"{log.DEBUG} Remove Search Term: {key}")
+        query = "DELETE FROM dailynews WHERE channel_id = ? AND key_terms = ?"
+        cursor.execute(query, (channel_id, key.lower(),))
+        database.commit()
+        return "Very sad to see you go. Darn hooligans."
+    
     def handle_set(self, attributes: list[str]) -> str:
         try:
             channel = attributes[0]

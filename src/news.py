@@ -134,9 +134,9 @@ class News:
             match attributes[1].lower():
                 case "please":
                     await BotUtil.acknowledge_message(message)
-                    logger.info(f"{log.DEBUG} User wants a random news article")
+                    logger.debug(f"{log.DEBUG} User wants a random news article")
                     article_title, article_text = News.get_random_article()
-                    logger.info(f"{log.DEBUG} Random article's title: {article_title}")
+                    logger.debug(f"{log.DEBUG} Random article's title: {article_title}")
                     return AI.send_article(article_title, article_text)
                 case "from":
                     await BotUtil.acknowledge_message(message)
@@ -152,12 +152,12 @@ class News:
                     return DatabaseNews.handle_set(DatabaseNews(), attributes[2:])
                 case "remove":
                     await BotUtil.acknowledge_message(message)
-                    # TODO: will remove news for specified channel using key term
-                    return "TODO"
+                    search_term = " ".join(attributes[2:])
+                    return DatabaseNews.delete_key_term(DatabaseNews(), message.channel.id, search_term)
                 case "list":
                     await BotUtil.acknowledge_message(message)
                     data = DatabaseNews.read_channel_terms(DatabaseNews(), message.channel.id)
-                    logger.info(f"{log.DEBUG} Current read data: {data}")
+                    logger.debug(f"{log.DEBUG} Current read data: {data}")
                     embedded_message = BotUtil.embedded_message(f"Current search terms for #{message.channel.name}", "")
                     for _, key in data:
                         name_list = BotUtil.capitalize_words(list(key.split()))
