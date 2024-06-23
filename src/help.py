@@ -65,9 +65,9 @@ class Help:
                     logger.debug(f"{log.DEBUG} Sending help for news please")
                     return message
                 case "remove":
-                    message = BotUtil.embedded_message(title="__News Remove [Search Term]__", thumbnail=thumbnail)
-                    message.add_field(name="**Description**", value="Removes a search term from being summarized in the daily news. If you're unsure of what topics already exist, use `news list`.", inline=False)
-                    message.add_field(name="**Example Usage**", value="`news remove stock market` -- will no longer search news about the _stock market_ daily.", inline=False)
+                    message = BotUtil.embedded_message(title="__News Remove [Channel ID] [Search Term]__", thumbnail=thumbnail)
+                    message.add_field(name="**Description**", value="Removes a search term from being summarized in the daily news from the specified channel. If you're unsure of what topics already exist, use `news list` in the channel.", inline=False)
+                    message.add_field(name="**Example Usage**", value="`news remove 12345678901234567 stock market` -- will no longer search news about the _stock market_ daily in channel _12345678901234567_.", inline=False)
                     logger.debug(f"{log.DEBUG} Sending help for news remove")
                     return message
                 case _:

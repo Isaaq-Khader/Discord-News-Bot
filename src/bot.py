@@ -69,5 +69,5 @@ class BotUtil:
         regex = "[0-9]{17,18}"
         result = re.search(regex, channel)
         is_channel = result is not None
-        logger.info(f"{log.DEBUG} is channel: {is_channel}")
+        logger.debug(f"{log.DEBUG} is channel: {is_channel}")
         return is_channel

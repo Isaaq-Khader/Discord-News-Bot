@@ -153,8 +153,13 @@ class News:
                     return DatabaseNews.handle_set(DatabaseNews(), attributes[1:])
                 case "remove":
                     await BotUtil.acknowledge_message(message)
-                    search_term = " ".join(attributes[1:])
-                    return DatabaseNews.delete_key_term(DatabaseNews(), message.channel.id, search_term)
+                    channel = attributes[1]
+                    logger.debug(f"{log.DEBUG} Channel ID: {channel}")
+                    if BotUtil.verify_channel(channel):
+                        search_term = " ".join(attributes[2:])
+                        return DatabaseNews.delete_key_term(DatabaseNews(), channel, search_term)
+                    else:
+                        return "Invalid/No channel ID given."
                 case "list":
                     await BotUtil.acknowledge_message(message)
                     data = DatabaseNews.read_channel_terms(DatabaseNews(), message.channel.id)
@@ -171,7 +176,7 @@ class News:
                     return BotUtil.similar_command_word("news", "news", attributes[0], BotUtil.supported_news_commands)
         except IndexError:
             logger.critical(f"{log.ERROR} User went out of bounds for news call. Perhaps it wasn't on purpose?")
-            return ""
+            return "I'm not able to do anything with an incomplete command!"
         except TypeError as e:
             logger.critical(f"{log.ERROR} Required one or more arguments to proceed... Error: {e}")
             return ""

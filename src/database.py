@@ -58,7 +58,7 @@ class DatabaseNews:
     def handle_set(self, attributes: list[str]) -> str:
         try:
             channel = attributes[0]
-            logger.info(f"{log.DEBUG} Channel ID: {channel}")
+            logger.debug(f"{log.DEBUG} Channel ID: {channel}")
             if BotUtil.verify_channel(channel):
                 logger.debug(f"{log.DEBUG} Valid channel, adding to database...")
                 terms = " ".join(attributes[1:])
