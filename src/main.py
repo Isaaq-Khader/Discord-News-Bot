@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import discord as d
 import logging
 from bot import BotUtil
+from daily_news import DailyNews
 from dice import Dice
 from help import Help
 from logs import log
@@ -52,7 +53,6 @@ class DiscordBot:
                 logger.debug(f"{log.DEBUG} Word Match for {word} at {index}")
                 return single_responses[word]
         
-                    
         chance = randint(1, 10)
         logger.info(f"random number was {chance}")
         if chance == 3:
@@ -79,7 +79,7 @@ class DiscordBot:
     async def on_ready() -> None:
         logger.info(f"{log.INFO} {client.user} is now running!")
         await client.change_presence(activity=d.Activity(type=d.ActivityType.watching, name="current news"))
-        News(client) # begins daily news
+        DailyNews(client) # begins daily news
 
 
     @client.event

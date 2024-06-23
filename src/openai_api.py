@@ -47,6 +47,7 @@ class AI:
         embedded_message = BotUtil.embedded_message(article_title, summary, BotUtil.author, BotUtil.footer, BotUtil.icon, BotUtil.thumbnail)
         return embedded_message
 
+    @staticmethod
     def process_articles(title: str, article_titles: list, article_texts: list):
         if not article_titles or not article_texts:
             return "There seems to be no information I can give you."

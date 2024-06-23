@@ -1,53 +1,16 @@
-import datetime
 from random import randint
 import discord
 from gnews import GNews
 import logging
 from bot import BotUtil
 from database import DatabaseNews
-from discord.ext import tasks
 from logs import log
 from newsplease import NewsPlease, NewsArticle
 from openai_api import AI
 
 logger = logging.getLogger("News")
-SENDING_TIME = datetime.time(14, 0, 0, 0) # in UTC (-5 CST)
 
 class News:
-    def __init__(self, client) -> None:
-        self.send_news.start()
-        self.client = client
-        self.database = DatabaseNews()
-
-    @tasks.loop(time=SENDING_TIME)
-    async def send_news(self):
-        try:
-            logger.info(f"{log.INFO} Running daily news!")
-            channel_ids = self.database.get_channel_ids()
-            logger.info(f"Channel IDs: {channel_ids}")
-            key_terms = self.database.get_key_terms()
-            logger.info(f"Key terms: {key_terms}")
-            key_terms_cache: dict = {}
-            for curr_id, curr_key in zip(channel_ids, key_terms):
-                id = curr_id[0]
-                key = curr_key[0]
-                logger.info(f"Current Channel ID: {id}")
-                logger.info(f"Current search term: {key}")
-
-                channel = self.client.get_channel(id)
-                if key in list(key_terms_cache.keys()):
-                    logger.debug(f"{log.DEBUG} Using cached embedded response for channel {id}!")
-                    embedded_response = key_terms_cache.get(key)
-                    await channel.send(embed=embedded_response)
-                    continue
-                    
-                article_titles, article_texts, title = News.get_specific_articles(list(key.split(" ")))
-                embedded_response = AI.process_articles(title, article_titles, article_texts)
-                key_terms_cache[key] = embedded_response
-                await channel.send(embed=embedded_response)
-        except Exception as e:
-            logger.critical(f"{log.ERROR} {e}")
-
     def get_articles_from_google(GoogleNews: GNews, news_articles: list[dict[str, any]] | list) -> tuple[list, list]:
         article_title_list = []
         article_text_list = []
@@ -82,6 +45,7 @@ class News:
 
         return article_title, article_text
 
+    @staticmethod
     def get_specific_articles(attributes: list[str]) -> tuple[list, list, str]:
         GoogleNews = GNews(max_results=5, period='1d', exclude_websites=["ft.com", "wsj.com"])
         try:
