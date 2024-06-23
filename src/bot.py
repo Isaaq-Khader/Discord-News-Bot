@@ -66,6 +66,8 @@ class BotUtil:
     
     def verify_channel(channel: str):
         logger.debug(f"{log.DEBUG} Verifying channel...")
-        regex = "^\d+$" # all digits
+        regex = "[0-9]{17,18}"
         result = re.search(regex, channel)
-        return result is not None
+        is_channel = result is not None
+        logger.info(f"{log.DEBUG} is channel: {is_channel}")
+        return is_channel

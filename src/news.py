@@ -149,7 +149,8 @@ class News:
                     return AI.send_article(article_title, article_text)
                 case "add":
                     await BotUtil.acknowledge_message(message)
-                    return DatabaseNews.handle_set(DatabaseNews(), attributes[2:])
+                    logger.info(f"{log.DEBUG} Current attributes: {attributes[1:]}")
+                    return DatabaseNews.handle_set(DatabaseNews(), attributes[1:])
                 case "remove":
                     await BotUtil.acknowledge_message(message)
                     search_term = " ".join(attributes[1:])
@@ -158,6 +159,8 @@ class News:
                     await BotUtil.acknowledge_message(message)
                     data = DatabaseNews.read_channel_terms(DatabaseNews(), message.channel.id)
                     logger.debug(f"{log.DEBUG} Current read data: {data}")
+                    if not data:
+                        return "There is currently no news being posted to this channel."
                     embedded_message = BotUtil.embedded_message(f"Current search terms for #{message.channel.name}")
                     for _, key in data:
                         name_list = BotUtil.capitalize_words(list(key.split()))

@@ -35,9 +35,9 @@ class Help:
         try:
             match attributes[1]:
                 case "add":
-                    message = BotUtil.embedded_message(title="__News Add [Search Term]__", thumbnail=thumbnail)
-                    message.add_field(name="**Description**", value="Adds a search term for daily news to be published.", inline=False)
-                    message.add_field(name="**Example Usage**", value="`news add stock market` -- adds the search term _stock market_ to daily news upload.", inline=False)
+                    message = BotUtil.embedded_message(title="__News Add [Channel ID] [Search Term]__", thumbnail=thumbnail)
+                    message.add_field(name="**Description**", value="Adds a search term for daily news to be published in the specified channel.", inline=False)
+                    message.add_field(name="**Example Usage**", value="`news add 12345678901234567 stock market` -- adds the search term _stock market_ to daily news upload in channel _12345678901234567_.", inline=False)
                     logger.debug(f"{log.DEBUG} Sending help for news add")
                     return message
                 case "from":

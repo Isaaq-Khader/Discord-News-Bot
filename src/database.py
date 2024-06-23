@@ -58,6 +58,7 @@ class DatabaseNews:
     def handle_set(self, attributes: list[str]) -> str:
         try:
             channel = attributes[0]
+            logger.info(f"{log.DEBUG} Channel ID: {channel}")
             if BotUtil.verify_channel(channel):
                 logger.debug(f"{log.DEBUG} Valid channel, adding to database...")
                 terms = " ".join(attributes[1:])
@@ -65,7 +66,7 @@ class DatabaseNews:
                 return f"Set channel {channel} with search terms: {terms}"
             else:
                 logger.critical(f"{log.ERROR} Invalid channel given!")
-                return "No channel ID given."
+                return "Improper channel ID given."
         except IndexError:
             logger.critical(f"{log.ERROR} User went out of bounds for setting up news.")
             return "Specify a channel to set the news up to, along with any key words to search for."
