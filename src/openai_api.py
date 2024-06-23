@@ -27,9 +27,9 @@ class AI:
         )
 
         usage = chat_object.usage
-        logger.info(f"{log.DEBUG} Prompt Tokens Used: {usage.prompt_tokens}")
-        logger.info(f"{log.DEBUG} Completion Tokens Used: {usage.completion_tokens}")
-        logger.info(f"{log.DEBUG} Total Tokens Used: {usage.total_tokens}")
+        logger.debug(f"{log.DEBUG} Prompt Tokens Used: {usage.prompt_tokens}")
+        logger.debug(f"{log.DEBUG} Completion Tokens Used: {usage.completion_tokens}")
+        logger.debug(f"{log.DEBUG} Total Tokens Used: {usage.total_tokens}")
 
         response = chat_object.choices[0].message.content
         logger.info(f"{log.INFO} OpenAI Response: {response}")
@@ -44,20 +44,20 @@ class AI:
         if AI.check_article(article_title):
             return "Unable to summarize article."
         summary = AI.summarize_article(article_text)
-        embedded_message = BotUtil.embedded_message(article_title, summary)
+        embedded_message = BotUtil.embedded_message(article_title, summary, BotUtil.author, BotUtil.footer, BotUtil.icon, BotUtil.thumbnail)
         return embedded_message
 
     def process_articles(title: str, article_titles: list, article_texts: list):
         if not article_titles or not article_texts:
             return "There seems to be no information I can give you."
-        embedded_message = BotUtil.embedded_message(title, "")
+        embedded_message = BotUtil.embedded_message(title=title, author=BotUtil.author, footer=BotUtil.footer, icon=BotUtil.icon, thumbnail=BotUtil.thumbnail)
         for title, text in zip(article_titles, article_texts):
             if AI.check_article(title):
                 logger.warning(f"{log.WARN} Article was unable to be read... skipping...")
                 continue
             logger.debug(f"{log.DEBUG} Article Title: {title}")
             logger.debug(f"{log.DEBUG} Article text len: {len(text)}")
-            logger.info(f"{log.DEBUG} Embed len: {len(embedded_message)}")
+            logger.debug(f"{log.DEBUG} Embed len: {len(embedded_message)}")
             if len(embedded_message) >= 5500:
                 return embedded_message
             summary = AI.summarize_article(text)

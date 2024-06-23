@@ -36,7 +36,7 @@ class News:
 
                 channel = self.client.get_channel(id)
                 if key in list(key_terms_cache.keys()):
-                    logger.info(f"{log.DEBUG} Using cached embedded response for channel {id}!")
+                    logger.debug(f"{log.DEBUG} Using cached embedded response for channel {id}!")
                     embedded_response = key_terms_cache.get(key)
                     await channel.send(embed=embedded_response)
                     continue
@@ -55,12 +55,12 @@ class News:
             logger.warning(f"{log.WARN} No Articles Found!")
             return [], [] 
         for index, article in enumerate(news_articles):
-            logger.info(f"{log.DEBUG} Article #{index}\n {article}")
+            logger.debug(f"{log.DEBUG} Article #{index}\n {article}")
             article_details = GoogleNews.get_full_article(article["url"])
             if not article_details:
                 logger.warning(f"{log.WARN} Error retreiving article! Skipping...")
                 continue
-            logger.info(f"{log.DEBUG} Article Title:{article_details.title}")
+            logger.debug(f"{log.DEBUG} Article Title:{article_details.title}")
             article_title_list.append(article_details.title)
             article_text_list.append(article_details.text)
         return article_title_list, article_text_list
@@ -116,13 +116,13 @@ class News:
     def select_random_article(GoogleNews: GNews) -> str:
         articles = GoogleNews.get_top_news()
         random = randint(0, GoogleNews.max_results - 1)
-        logger.info(f"{log.DEBUG} Chose random article #{random}")
+        logger.debug(f"{log.DEBUG} Chose random article #{random}")
         return articles[random]["url"]
 
     def get_random_article() -> tuple[str, str]:
         GoogleNews = GNews(max_results=20, period='1d', exclude_websites=["ft.com", "wsj.com"])
         article_link = News.select_random_article(GoogleNews)
-        logger.info(f"{log.DEBUG} Attained {article_link}")
+        logger.debug(f"{log.DEBUG} Attained {article_link}")
         article = GoogleNews.get_full_article(article_link)
         return article.title, article.text
         
@@ -158,14 +158,14 @@ class News:
                     await BotUtil.acknowledge_message(message)
                     data = DatabaseNews.read_channel_terms(DatabaseNews(), message.channel.id)
                     logger.debug(f"{log.DEBUG} Current read data: {data}")
-                    embedded_message = BotUtil.embedded_message(f"Current search terms for #{message.channel.name}", "")
+                    embedded_message = BotUtil.embedded_message(f"Current search terms for #{message.channel.name}")
                     for _, key in data:
                         name_list = BotUtil.capitalize_words(list(key.split()))
                         embedded_message.add_field(name="", value=f"* {" ".join(name_list)}", inline=False)
                     return embedded_message
                 case _:
-                    logger.debug(f"{log.DEBUG} User either entered wrong command or used 'news' in a sentence")
-                    return ""
+                    logger.warning(f"{log.WARN} Unknown command {attributes[0]}!")
+                    return BotUtil.similar_command_word("news", "news", attributes[0], BotUtil.supported_news_commands)
         except IndexError:
             logger.critical(f"{log.ERROR} User went out of bounds for news call. Perhaps it wasn't on purpose?")
             return ""

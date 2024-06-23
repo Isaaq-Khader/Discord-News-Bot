@@ -48,8 +48,8 @@ class DatabaseNews:
     def delete_key_term(self, channel_id: str, key: str) -> str:
         if not key:
             return "No search term was given. Provide a search term to remove."
-        logger.info(f"{log.DEBUG} Remove Channel ID: {channel_id}")
-        logger.info(f"{log.DEBUG} Remove Search Term: {key}")
+        logger.debug(f"{log.DEBUG} Remove Channel ID: {channel_id}")
+        logger.debug(f"{log.DEBUG} Remove Search Term: {key}")
         query = "DELETE FROM dailynews WHERE channel_id = ? AND key_terms = ?"
         cursor.execute(query, (channel_id, key.lower(),))
         database.commit()
@@ -59,7 +59,7 @@ class DatabaseNews:
         try:
             channel = attributes[0]
             if BotUtil.verify_channel(channel):
-                logger.info(f"{log.DEBUG} Valid channel, adding to database...")
+                logger.debug(f"{log.DEBUG} Valid channel, adding to database...")
                 terms = " ".join(attributes[1:])
                 self.write(channel, terms)
                 return f"Set channel {channel} with search terms: {terms}"
