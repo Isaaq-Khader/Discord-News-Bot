@@ -28,4 +28,4 @@ USER appuser
 
 COPY . .
 
-CMD python src/main.py
+CMD python ./main.py
