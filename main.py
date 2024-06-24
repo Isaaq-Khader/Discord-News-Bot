@@ -1,14 +1,16 @@
+import asyncio
 from random import randint
 from dotenv import load_dotenv
 import discord as d
+from discord.ext import commands
 import logging
-from bot import BotUtil
-from daily_news import DailyNews
-from dice import Dice
-from help import Help
-from logs import log
+from src.bot import BotUtil
+# from cogs.daily_news import DailyNews
+from src.dice import Dice
+from src.help import Help
+from src.logs import log
 import os
-from news import News
+from src.news import News
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(message)s')
 logger = logging.getLogger("RonBurgundy")
@@ -17,7 +19,7 @@ load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 intents = d.Intents.default()
 intents.message_content = True
-client = d.Client(intents=intents)
+client = commands.Bot(command_prefix="", intents=intents, help_command=None)
 
 class DiscordBot:
     async def handle_response(message: d.Message, user_input: str) -> str:
@@ -79,8 +81,6 @@ class DiscordBot:
     async def on_ready() -> None:
         logger.info(f"{log.INFO} {client.user} is now running!")
         await client.change_presence(activity=d.Activity(type=d.ActivityType.watching, name="current news"))
-        DailyNews(client) # begins daily news
-
 
     @client.event
     async def on_message(message: d.Message) -> None:
@@ -94,8 +94,13 @@ class DiscordBot:
         logger.info(f"{log.INFO} [{channel}] {username}: '{user_message}'")
         await DiscordBot.process_and_send_message(message, user_message)
     
-def main():
-    client.run(token=token)
+async def load():
+    for file in os.listdir("./cogs"):
+        if file.endswith(".py"):
+            await client.load_extension(f"cogs.{file[:-3]}")
 
-if __name__ == "__main__":
-    main()
+async def main():
+    await load()
+    await client.start(token=token)
+
+asyncio.run(main())

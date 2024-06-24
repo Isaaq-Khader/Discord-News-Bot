@@ -2,11 +2,11 @@ from random import randint
 import discord
 from gnews import GNews
 import logging
-from bot import BotUtil
-from database import DatabaseNews
-from logs import log
+from src.bot import BotUtil
+from src.database import DatabaseNews
+from src.logs import log
 from newsplease import NewsPlease, NewsArticle
-from openai_api import AI
+from src.openai_api import AI
 
 logger = logging.getLogger("News")
 

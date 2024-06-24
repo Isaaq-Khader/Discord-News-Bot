@@ -1,11 +1,9 @@
 import logging
 import os
-import discord
-from bot import BotUtil
+from src.bot import BotUtil
 from dotenv import load_dotenv
 from openai import OpenAI
-
-from logs import log
+from src.logs import log
 
 logger = logging.getLogger("OpenAI API")
 

@@ -1,21 +1,24 @@
 import datetime
 import logging
-from database import DatabaseNews
-from discord.ext import tasks
-from logs import log
-from news import News
-from openai_api import AI
+from src.database import DatabaseNews
+from discord.ext import tasks, commands
+from src.logs import log
+from src.news import News
+from src.openai_api import AI
 
 logger = logging.getLogger("DailyNews")
 SENDING_TIME = datetime.time(13, 00, 0, 0) # in UTC (-5 CST)
 
-class DailyNews:
+class DailyNews(commands.Cog):
     def __init__(self, client) -> None:
         self.send_news.start()
         self.client = client
         self.database = DatabaseNews()
         self.open_ai = AI()
         self.news = News()
+
+    def news_unload(self):
+        self.send_news.cancel()
 
     @tasks.loop(time=SENDING_TIME)
     async def send_news(self):
@@ -43,3 +46,11 @@ class DailyNews:
                 await channel.send(embed=embedded_response)
         except Exception as e:
             logger.critical(f"{log.ERROR} {e}")
+
+    @send_news.before_loop
+    async def before_daily_news(self):
+        logger.info(f"{log.INFO} Waiting to send the news!")
+        await self.client.wait_until_ready()
+
+async def setup(client):
+    await client.add_cog(DailyNews(client))

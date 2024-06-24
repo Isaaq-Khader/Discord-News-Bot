@@ -1,6 +1,6 @@
 import logging
 from random import randint
-from logs import log
+from src.logs import log
 import re
 
 logger = logging.getLogger("Dice")

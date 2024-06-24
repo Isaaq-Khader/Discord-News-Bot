@@ -1,7 +1,7 @@
 import logging
 import sqlite3
-from bot import BotUtil
-from logs import log
+from src.bot import BotUtil
+from src.logs import log
 
 logger = logging.getLogger("News Database")
 

@@ -1,7 +1,7 @@
 import datetime
 import difflib
 import logging
-from logs import log
+from src.logs import log
 import discord
 import re
 
