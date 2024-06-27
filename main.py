@@ -5,7 +5,6 @@ import discord as d
 from discord.ext import commands
 import logging
 from src.bot import BotUtil
-# from cogs.daily_news import DailyNews
 from src.dice import Dice
 from src.help import Help
 from src.logs import log
@@ -19,7 +18,7 @@ load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
 intents = d.Intents.default()
 intents.message_content = True
-client = commands.Bot(command_prefix="", intents=intents, help_command=None)
+client = commands.Bot(command_prefix=BotUtil.bot_prefix, intents=intents, help_command=None)
 
 class DiscordBot:
     async def handle_response(message: d.Message, user_input: str) -> str:
@@ -37,11 +36,16 @@ class DiscordBot:
                             "hi": "Hi there!",
                             "ron": "What is it?",}
         formatted_response = user_input.lower().split()
-        logger.debug(f"{log.DEBUG} Formatted response: {formatted_response}")
+        logger.info(f"{log.DEBUG} Formatted response: {formatted_response}")
 
-        if formatted_response[0] in BotUtil.supported_commands:
+        possible_command = formatted_response[0].replace(BotUtil.bot_prefix, "")
+        is_command = possible_command in BotUtil.supported_commands
+        logger.debug(f"{log.DEBUG} Is a command? -- {is_command}")
+        has_prefix = formatted_response[0].startswith(BotUtil.bot_prefix)
+        logger.debug(f"{log.DEBUG} Has prefix? -- {has_prefix}")
+        if is_command and has_prefix:
             attributes = formatted_response[1:]
-            match formatted_response[0]:
+            match possible_command:
                 case "roll":
                     return Dice.roll_dice(attributes)
                 case "news":
@@ -49,6 +53,8 @@ class DiscordBot:
                 case "help":
                     help_class = Help(formatted_response)
                     return help_class.help_processor()
+                case _:
+                    return "That is currently not implemented. Try again later. Now shoo."
 
         for index, word in enumerate(formatted_response, 1):
             if word in single_responses:

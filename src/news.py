@@ -144,3 +144,6 @@ class News:
         except TypeError as e:
             logger.critical(f"{log.ERROR} Required one or more arguments to proceed... Error: {e}")
             return ""
+        except Exception as e:
+            logger.critical(f"{log.ERROR} {e}")
+            return "I seem to have ran into an issue processing that command. Apologies."
