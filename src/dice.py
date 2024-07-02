@@ -6,6 +6,10 @@ import re
 logger = logging.getLogger("Dice")
 
 class Dice:
+    # Description: Uses regex to attain the roll given by the user
+    # Parameters:
+    #   - roll: Roll in custom roll format (ex: 1d20)
+    # Returns: Number of dice, sides on die, and modifier (if any)
     def split_roll_text(roll: str) -> tuple[int, int, int]:
         modifier = re.sub("[0-9]+[d][0-9]+", "", roll)
         logger.debug(f"{log.DEBUG} Modifier regex result: {modifier}")
@@ -24,6 +28,10 @@ class Dice:
         logger.debug(f"{log.DEBUG} Die Used: {die}")
         return int(num), int(die), modifier
     
+    # Description: Rolls a dice using tabletop formatting. 
+    # Parameters:
+    #   - attributes: List of strings containing parameters from the user
+    # Returns: Result of the roll
     def roll_dice(attributes: list[str]) -> str:
         logger.debug(f"{log.DEBUG} Attributes to work with: {attributes}")
         for attribute in attributes:

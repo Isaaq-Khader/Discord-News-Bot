@@ -1,5 +1,7 @@
 import logging
 import os
+
+import discord
 from src.bot import BotUtil
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -12,6 +14,10 @@ token = os.getenv('OPENAI_TOKEN')
 client = OpenAI(api_key=token)
 
 class AI:
+    # Description: Creates a summary of a given article's text
+    # Parameters:
+    #   - article_text: The full text from an article
+    # Returns: Summary of the given article text
     def summarize_article(article_text: str) -> str:
         logger.info(f"{log.INFO} Making call to OpenAI for summary...")
         chat_object = client.chat.completions.create(
@@ -33,7 +39,11 @@ class AI:
         logger.info(f"{log.INFO} OpenAI Response: {response}")
         return response
     
-    def check_article(article_title: str):
+    # Description: Checks if this is a valid article. Sometimes an article has redirect text or unavailable text so this ensures this is a valid article.
+    # Parameters:
+    #   - article_title: The title of the article
+    # Returns: Whether this is a valid article or not (true/false)
+    def check_article(article_title: str) -> bool:
         return "You are being redirected" in article_title
 
     def send_article(article_title: str, article_text: str) -> str:
@@ -45,8 +55,14 @@ class AI:
         embedded_message = BotUtil.embedded_message(article_title, summary, BotUtil.author, BotUtil.footer, BotUtil.icon, BotUtil.thumbnail)
         return embedded_message
 
+    # Description: Processes each given article by summarizing the article's text and putting it into a Discord embed to be displayed to the user.
+    # Parameters:
+    #   - title: Title of the embedded message
+    #   - article_titles: List containing titles of each article
+    #   - article_texts: List containing texts of each article
+    # Returns: Custom discord embed for displaying the summaries of each article
     @staticmethod
-    def process_articles(title: str, article_titles: list, article_texts: list):
+    def process_articles(title: str, article_titles: list, article_texts: list) -> discord.Embed:
         if not article_titles or not article_texts:
             return "There seems to be no information I can give you."
         embedded_message = BotUtil.embedded_message(title=title, author=BotUtil.author, footer=BotUtil.footer, icon=BotUtil.icon, thumbnail=BotUtil.thumbnail)

@@ -11,6 +11,11 @@ from src.openai_api import AI
 logger = logging.getLogger("News")
 
 class News:
+    # Description: Attains articles from Google News API using urls provided by API.
+    # Parameters:
+    #   - GoogleNews: Custom GoogleNews object
+    #   - news_articles: Collection of base level news articles
+    # Returns: List of article titles and list of article texts
     def get_articles_from_google(GoogleNews: GNews, news_articles: list[dict[str, any]] | list) -> tuple[list, list]:
         article_title_list = []
         article_text_list = []
@@ -28,6 +33,10 @@ class News:
             article_text_list.append(article_details.text)
         return article_title_list, article_text_list
 
+    # Description: Gets details of an article through its URL using NewsPlease API.
+    # Parameters:
+    #   - url: URL of the article
+    # Returns: Article's title and text
     def get_article_details(url: str) -> tuple[str, str]:
         article = NewsPlease.from_url(url)
         if not article:
@@ -45,6 +54,10 @@ class News:
 
         return article_title, article_text
 
+    # Description: Gets the news based on attributes given by user. Some keywords have special topics that can be searched.
+    # Parameters:
+    #   - attributes: List of strings containing parameters from the user
+    # Returns: List of article titles, list of article texts, and search term used
     @staticmethod
     def get_specific_articles(attributes: list[str]) -> tuple[list, list, str]:
         GoogleNews = GNews(max_results=5, period='1d', exclude_websites=["ft.com", "wsj.com"])
@@ -77,12 +90,19 @@ class News:
         articles_titles, articles_texts = News.get_articles_from_google(GoogleNews, news_articles)
         return articles_titles, articles_texts, title
 
+    # Description: Selects a random article from the news using GoogleNews API.
+    # Parameters:
+    #   - GoogleNews: Custom GoogleNews object
+    # Returns: URL of the randomly selected article
     def select_random_article(GoogleNews: GNews) -> str:
         articles = GoogleNews.get_top_news()
         random = randint(0, GoogleNews.max_results - 1)
         logger.debug(f"{log.DEBUG} Chose random article #{random}")
         return articles[random]["url"]
 
+    # Description: Randomly selects an article from the internet.
+    # Parameters: None
+    # Returns: Article's title and text
     def get_random_article() -> tuple[str, str]:
         GoogleNews = GNews(max_results=20, period='1d', exclude_websites=["ft.com", "wsj.com"])
         article_link = News.select_random_article(GoogleNews)
@@ -90,7 +110,11 @@ class News:
         article = GoogleNews.get_full_article(article_link)
         return article.title, article.text
         
-
+    # Description: Processes user's command to get the news.
+    # Parameters:
+    #   - message: Discord message
+    #   - attributes: List of strings containing parameters from the user
+    # Returns: Response based on command given
     async def get_news(message: discord.Message, attributes: list[str]) -> str:
         logger.info(f"{log.INFO} Potential news call received")
         logger.debug(f"{log.DEBUG} Attributes received: {attributes}")

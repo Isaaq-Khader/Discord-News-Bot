@@ -21,6 +21,11 @@ intents.message_content = True
 client = commands.Bot(command_prefix=BotUtil.bot_prefix, intents=intents, help_command=None)
 
 class DiscordBot:
+    # Description: Processes a Discord message and checks whether this is a command or special term
+    # Parameters: 
+    #   - message: Discord message
+    #   - user_input: User's message text
+    # Returns: String of response to command or special term
     async def handle_response(message: d.Message, user_input: str) -> str:
         cannonball = "Ladies and gentlemen, can I please have your attention. I've just been handed an urgent and horrifying news story. I need all of you to stop what you're doing and listen. CANNONBALL!!"
         random_responses = ["I'm in a glass case of emotion!", 
@@ -68,6 +73,11 @@ class DiscordBot:
         else:
             return ""
 
+    # Description: Prepares to send a message to a discord channel
+    # Parameters:
+    #   - message: Discord message
+    #   - user_input: User's message text
+    # Returns: None
     async def process_and_send_message(message: d.Message, user_message: str) -> None:
         if not user_message:
             logger.warning(f"{log.WARN} Empty user message received")
